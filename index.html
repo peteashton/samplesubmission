@@ -1,0 +1,134 @@
+<html>
+    <head>
+        <title>BTF Genomics Lab Sample Submission</title>
+        <link rel='stylesheet' type='text/css' href='submission.css' />
+        <script type='text/javascript' src='jquery-1.12.2.min.js'></script>
+        <script type='text/javascript' src="submission.js"></script>
+        <script type='text/javascript'>
+$(document).ready(function() {
+    $("#excelpaste").on("paste", pasteSampleData);
+});
+        </script>
+    </head>
+    <body>
+        <div id='allcontent'>
+            <h1>BTF Genomics Lab</h1>
+            <h2>Sample Submission</h2>
+            <form method='POST' action='/cgi-bin/submission.cgi'>
+                <div id='userinfo'>
+                    <fieldset>
+                        <legend>User information:</legend>
+                        <label class='tabular' for='username'>Name:</label>
+                        <input class='wide' id='username' name='username' />
+                        <br />
+                        <label class='tabular' for='emailaddress'>E-mail address:</label>
+                        <input class='wide' id='emailaddress' name='emailaddress' />
+                        <br />
+                        <label for='groupname' class='tabular'>Research group:</label>
+                        <input class='wide' id='groupname' name='groupname' />
+                        <br />
+                        <label class='tabular' for='projectname'>Project name:</label>
+                        <input class='wide' id='projectname' name='projectname' />
+                        <br />
+                        <label class='tabular' for='workorder'>Workorder:</label>
+                        <input class='wide' id='workorder' name='workorder' />
+                        <br />
+                    </fieldset>
+                    <fieldset>
+                        <legend>Experiment:</legend>
+                        <label class='tabular' for='samplesource'>Source (species):</label>
+                        <input class='wide' id='samplesource' name='samplesource' />
+                        <br />
+                        <label class='tabular' for='experimenttype'>Experiment Type:</label>
+                        <select onchange="changeExperimentType(this);" id='experimenttype' name='experimenttype'>
+                            <option value="genomic">Sequencing Genomic DNA</option>
+                            <option selected value="rnaseq">RNASeq for Gene Expression</option>
+                            <option value="amplicon">Amplicon Sequencing</option>
+                            <option value="chipseq">ChIP-Seq</option>
+                            <option value="minion">MinION Nanopore Sequencing</option>
+                            <option value="other">Other (enter details)</option>
+                        </select>
+                        <input name='otherexpttype' id='otherexpttype' disabled />
+                        <br />
+                        <label class='tabular' for='samplenumber'>Number of Samples:</label>
+                        <input id='samplenumber' name='samplenumber' 
+                               onchange="resetSampleTable(this);" />
+                        <br />
+                        <label class='tabular' for='extractionmethod'>Extraction Method:</label>
+                        <textarea id='extractionmethod' name='extractionmethod' cols=50 rows=10></textarea>
+                        <br />
+                        <label class='tabular' for='comments'>Comments:</label>
+                        <textarea id='comments' name='comments' cols=50 rows=10></textarea>
+                        <br />
+                    </fieldset>
+                    <fieldset class='invisible'>
+                        <legend>Sample list:</legend>
+                        <p>You can enter the sample data in the table below. 
+Alternatively, you can paste data from Excel into the field below and the table 
+will be populated automatically.</p>
+                        <div id='pastepanel'>
+                            <textarea onblur="resetPasteField(this);" 
+                                      onfocus="preparePasteField(this);" 
+                                      class='wide' id='excelpaste' 
+                                      rows=1 cols=60>Paste data from Excel here</textarea>
+                        </div>
+                        <table id='samplelist' name='samplelist' width=100%>
+                            <thead>
+                                <tr>
+                                    <th>Sample no</th>
+                                    <th>Sample type</th>
+                                    <th>Sample identifier</th>
+                                    <th>Concentration<br />(ng/&micro;l)</th>
+                                    <th>A260/A280</th>
+                                    <th>A260/A230</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sampletable">
+                                <tr><tr>
+                            </tbody>
+                        </table>
+                    </fieldset>
+                    <fieldset>
+                        <legend>Data Analysis Requirements</legend>
+                        <p>If you leave the "No analysis" option selected, the 
+data will be returned to you as a set of FASTQ files, directly as they are send 
+to us by the sequencing service.</p>
+                        <input type='radio' 
+                               name='dataanalysis' 
+                               value='none' checked 
+                               onchange='selectMainAnalysis(this);'/> No analysis<br />
+                        <input type='radio' 
+                               name='dataanalysis' 
+                               onchange='selectMainAnalysis(this);'i
+                               value='trim' /> QC and adapter trimming<br />
+                        <input type='radio' 
+                               name='dataanalysis' 
+                               onchange='selectMainAnalysis(this);'
+                               value='map' /> Trimming and mapping to reference genome<br />
+                        <input type='radio' 
+                               name='dataanalysis' 
+                               onchange='selectMainAnalysis(this);'
+                               value='assemble' /> Trimming and <em>de novo</em> genome assembly<br />
+                        <input type='radio' 
+                               name='dataanalysis' 
+                               value='RNAseq' 
+                               onchange='selectMainAnalysis(this);'/> Transcript quantitation and differential expression calculation (including GSEA)<br />
+                        <input type='radio' 
+                               name='dataanalysis' 
+                               onchange="selectOtherAnalysis(this);" 
+                               value='other' /> Other<br />
+                        <label for="analysisdetails" 
+                               class="tabular">Other requirements:</label>
+                        <textarea name="analysisdetails" 
+                                  id="analysisdetails" 
+                                  cols=50 rows=10 
+                                  disabled></textarea>
+                    </fieldset>
+                </div>
+                <input type='button' 
+                       onclick='checkAndSubmit(this);' 
+                       value='Submit Sample Form' />
+            </form>
+        </div>
+    </body>
+</html>
